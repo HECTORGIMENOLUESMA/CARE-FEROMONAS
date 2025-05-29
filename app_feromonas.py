@@ -29,15 +29,22 @@ if uploaded_file:
         filas_con_feromona = num_filas // (patron_colocacion + 1)
         feromonas_por_fila = total_feromonas / filas_con_feromona
         intervalo_cepas = cepas_por_fila / feromonas_por_fila
-        area_por_feromona = 10000 / total_feromonas
+
+        # 🔁 Ajuste del intervalo al múltiplo de 0.5 más cercano
+        intervalo_cepas_ajustado = round(intervalo_cepas * 2) / 2
+        feromonas_por_fila_ajustada = cepas_por_fila / intervalo_cepas_ajustado
+        total_feromonas_ajustadas = int(filas_con_feromona * feromonas_por_fila_ajustada)
+
+        area_por_feromona = 10000 / total_feromonas_ajustadas
         radio_por_feromona = math.sqrt(area_por_feromona / math.pi)
 
         st.subheader("🔢 Resultados de Parámetros")
         st.write(f"**Filas totales:** {num_filas}")
         st.write(f"**Cepas por fila:** {cepas_por_fila}")
         st.write(f"**Filas con feromona:** {filas_con_feromona}")
-        st.write(f"**Feromonas por fila:** {feromonas_por_fila:.2f}")
-        st.write(f"**Intervalo entre feromonas (cepas):** {intervalo_cepas:.2f}")
+        st.write(f"**Feromonas por fila (ajustado):** {feromonas_por_fila_ajustada:.2f}")
+        st.write(f"**Intervalo entre feromonas (ajustado a 0.5):** {intervalo_cepas_ajustado:.2f} cepas")
+        st.write(f"**Total feromonas utilizadas (ajustado):** {total_feromonas_ajustadas}")
         st.write(f"**Área por feromona:** {area_por_feromona:.2f} m²")
         st.write(f"**Radio teórico:** {radio_por_feromona:.2f} m")
 
@@ -47,8 +54,8 @@ if uploaded_file:
         fila_indices = range(0, num_filas, patron_colocacion + 1)
         for fila in fila_indices:
             y = fila * distancia_filas + distancia_filas / 2
-            for j in range(int(feromonas_por_fila)):
-                x = (j + 0.5) * intervalo_cepas * distancia_cepas
+            for j in range(int(feromonas_por_fila_ajustada)):
+                x = (j + 0.5) * intervalo_cepas_ajustado * distancia_cepas
                 if x < ancho_parcela:
                     feromonas.append(Point(x, y))
 
